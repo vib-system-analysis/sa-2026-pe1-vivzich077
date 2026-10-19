@@ -117,4 +117,4 @@ flowchart LR
    результате, чтобы тест не обозначался как успешно проверенный без запуска.
 
 См. также [PRD](prd.md), [итоговую картинку](brief.md) и
-[черновик DoD](quality/dod-draft.md).
+[карту заинтересованных сторон](stakeholders.md) и [черновик DoD](quality/dod-draft.md).
