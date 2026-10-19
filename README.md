@@ -73,7 +73,7 @@ pytest
 ## Структура репозитория
 
 - `app/` — HTTP-заглушка сервиса.
-- `docs/prd.md`, `docs/hypotheses.md`, `docs/insights.md`, `docs/glossary.md`, `docs/brief.md` — продуктовые артефакты; интервью пока не проведены.
+- `docs/prd.md`, `docs/system-boundary.md`, `docs/hypotheses.md`, `docs/insights.md`, `docs/glossary.md`, `docs/brief.md` — продуктовые артефакты; интервью пока не проведены.
 - `docs/research.md`, `docs/model-candidates.md`, `docs/experiments/` — кабинетный ресёрч и протокол пробы; реальные вызовы модели не выполнялись.
 - `docs/quality/` — метрики, DoD и план датасета. Текущие 10 seed-записей синтетические, не интервью-данные.
 - `.github/workflows/ci.yml` — CI для PR и push в `main`.
