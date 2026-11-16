@@ -1,0 +1,11 @@
+id,developer,api,orchestrator,repo_adapter,repository,llm,validator,runner,git_host,reviewer
+developer,0,1,0,0,0,0,0,0,0,0
+api,0,0,1,0,0,0,0,0,0,0
+orchestrator,0,0,0,1,0,1,1,1,1,0
+repo_adapter,0,0,1,0,1,0,0,0,0,0
+repository,0,0,0,1,0,0,0,1,0,0
+llm,0,0,1,0,0,0,0,0,0,0
+validator,0,0,1,0,0,0,0,0,0,0
+runner,0,0,1,0,0,0,0,0,0,0
+git_host,1,0,0,0,0,0,0,0,0,1
+reviewer,0,0,0,0,0,0,0,0,1,0
