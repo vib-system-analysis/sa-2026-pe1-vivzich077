@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  id="Definitions_TestWriter"
+                  targetNamespace="https://example.org/test-writer/bpmn"
+                  exporter="Camunda Modeler"
+                  exporterVersion="5.0">
+  <bpmn:message id="Message_HttpRequest" name="HTTP GET: путь запроса"/>
+  <bpmn:message id="Message_RootResponse" name="HTTP 200: name=ai-test-writer, status=stub"/>
+  <bpmn:message id="Message_HealthResponse" name="HTTP 200: status=ok"/>
+  <bpmn:message id="Message_NotFoundResponse" name="HTTP 404: detail=Not Found"/>
+
+  <bpmn:collaboration id="Collaboration_TestWriter">
+    <bpmn:participant id="Participant_Client" name="Внешний HTTP-клиент"/>
+    <bpmn:participant id="Participant_Service" name="Test Writer API" processRef="Process_TestWriter"/>
+    <bpmn:messageFlow id="MessageFlow_Request" name="GET + path" sourceRef="Participant_Client" targetRef="StartEvent_Request" messageRef="Message_HttpRequest"/>
+    <bpmn:messageFlow id="MessageFlow_RootResponse" name="HTTP response" sourceRef="EndEvent_Root" targetRef="Participant_Client" messageRef="Message_RootResponse"/>
+    <bpmn:messageFlow id="MessageFlow_HealthResponse" name="HTTP response" sourceRef="EndEvent_Health" targetRef="Participant_Client" messageRef="Message_HealthResponse"/>
+    <bpmn:messageFlow id="MessageFlow_NotFoundResponse" name="HTTP response" sourceRef="EndEvent_NotFound" targetRef="Participant_Client" messageRef="Message_NotFoundResponse"/>
+  </bpmn:collaboration>
+
+  <bpmn:process id="Process_TestWriter" name="Обработка HTTP-запроса" isExecutable="false">
+    <bpmn:startEvent id="StartEvent_Request" name="Получен HTTP GET">
+      <bpmn:messageEventDefinition id="MessageStart_Request" messageRef="Message_HttpRequest"/>
+    </bpmn:startEvent>
+    <bpmn:exclusiveGateway id="Gateway_Route" name="Какой путь запрошен?" default="Flow_NotFound"/>
+    <bpmn:serviceTask id="Task_Root" name="GET /: вернуть name=ai-test-writer, status=stub"/>
+    <bpmn:serviceTask id="Task_Health" name="GET /health: вернуть status=ok"/>
+    <bpmn:serviceTask id="Task_NotFound" name="Другой путь: ответ FastAPI 404"/>
+    <bpmn:endEvent id="EndEvent_Root" name="HTTP 200: описание заглушки">
+      <bpmn:messageEventDefinition id="MessageEnd_Root" messageRef="Message_RootResponse"/>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_Health" name="HTTP 200: сервис доступен">
+      <bpmn:messageEventDefinition id="MessageEnd_Health" messageRef="Message_HealthResponse"/>
+    </bpmn:endEvent>
+    <bpmn:endEvent id="EndEvent_NotFound" name="HTTP 404: Not Found">
+      <bpmn:messageEventDefinition id="MessageEnd_NotFound" messageRef="Message_NotFoundResponse"/>
+    </bpmn:endEvent>
+
+    <bpmn:sequenceFlow id="Flow_Start_Route" sourceRef="StartEvent_Request" targetRef="Gateway_Route"/>
+    <bpmn:sequenceFlow id="Flow_Route_Root" name="path = /" sourceRef="Gateway_Route" targetRef="Task_Root">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">path = '/'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_Route_Health" name="path = /health" sourceRef="Gateway_Route" targetRef="Task_Health">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">path = '/health'</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_NotFound" name="иначе" sourceRef="Gateway_Route" targetRef="Task_NotFound"/>
+    <bpmn:sequenceFlow id="Flow_Root_End" sourceRef="Task_Root" targetRef="EndEvent_Root"/>
+    <bpmn:sequenceFlow id="Flow_Health_End" sourceRef="Task_Health" targetRef="EndEvent_Health"/>
+    <bpmn:sequenceFlow id="Flow_NotFound_End" sourceRef="Task_NotFound" targetRef="EndEvent_NotFound"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiagram_TestWriter">
+    <bpmndi:BPMNPlane id="BPMNPlane_TestWriter" bpmnElement="Collaboration_TestWriter">
+      <bpmndi:BPMNShape id="Shape_Client" bpmnElement="Participant_Client" isHorizontal="true">
+        <dc:Bounds x="80" y="60" width="1180" height="90"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Service" bpmnElement="Participant_Service" isHorizontal="true">
+        <dc:Bounds x="80" y="210" width="1180" height="340"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Start" bpmnElement="StartEvent_Request">
+        <dc:Bounds x="150" y="357" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Gateway" bpmnElement="Gateway_Route" isMarkerVisible="true">
+        <dc:Bounds x="300" y="350" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Root" bpmnElement="Task_Root">
+        <dc:Bounds x="470" y="255" width="280" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Health" bpmnElement="Task_Health">
+        <dc:Bounds x="470" y="345" width="280" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_NotFound" bpmnElement="Task_NotFound">
+        <dc:Bounds x="470" y="435" width="280" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Root" bpmnElement="EndEvent_Root">
+        <dc:Bounds x="900" y="267" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_Health" bpmnElement="EndEvent_Health">
+        <dc:Bounds x="900" y="357" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_End_NotFound" bpmnElement="EndEvent_NotFound">
+        <dc:Bounds x="900" y="447" width="36" height="36"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="Edge_Flow_Start_Route" bpmnElement="Flow_Start_Route">
+        <di:waypoint x="186" y="375"/>
+        <di:waypoint x="300" y="375"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Route_Root" bpmnElement="Flow_Route_Root">
+        <di:waypoint x="325" y="350"/>
+        <di:waypoint x="325" y="285"/>
+        <di:waypoint x="470" y="285"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Route_Health" bpmnElement="Flow_Route_Health">
+        <di:waypoint x="350" y="375"/>
+        <di:waypoint x="470" y="375"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_NotFound" bpmnElement="Flow_NotFound">
+        <di:waypoint x="325" y="400"/>
+        <di:waypoint x="325" y="465"/>
+        <di:waypoint x="470" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Root_End" bpmnElement="Flow_Root_End">
+        <di:waypoint x="750" y="285"/>
+        <di:waypoint x="900" y="285"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_Health_End" bpmnElement="Flow_Health_End">
+        <di:waypoint x="750" y="375"/>
+        <di:waypoint x="900" y="375"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Flow_NotFound_End" bpmnElement="Flow_NotFound_End">
+        <di:waypoint x="750" y="465"/>
+        <di:waypoint x="900" y="465"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Message_Request" bpmnElement="MessageFlow_Request">
+        <di:waypoint x="168" y="150"/>
+        <di:waypoint x="168" y="357"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Message_RootResponse" bpmnElement="MessageFlow_RootResponse">
+        <di:waypoint x="918" y="267"/>
+        <di:waypoint x="918" y="185"/>
+        <di:waypoint x="1100" y="185"/>
+        <di:waypoint x="1100" y="150"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Message_HealthResponse" bpmnElement="MessageFlow_HealthResponse">
+        <di:waypoint x="936" y="375"/>
+        <di:waypoint x="1020" y="375"/>
+        <di:waypoint x="1020" y="165"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_Message_NotFoundResponse" bpmnElement="MessageFlow_NotFoundResponse">
+        <di:waypoint x="936" y="465"/>
+        <di:waypoint x="1140" y="465"/>
+        <di:waypoint x="1140" y="150"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
