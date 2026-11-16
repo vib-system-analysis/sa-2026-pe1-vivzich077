@@ -1,0 +1,11 @@
+id,label,kind
+developer,Разработчик,human
+api,HTTP API,service
+orchestrator,Оркестратор,service
+repo_adapter,Адаптер репозитория,service
+repository,Git-репозиторий,system
+llm,Языковая модель,external
+validator,Валидатор теста,service
+runner,Изолированный runner,service
+git_host,Git-хостинг,external
+reviewer,Рецензент,human

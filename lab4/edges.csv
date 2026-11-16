@@ -1,0 +1,18 @@
+source,target,type,description
+developer,api,data,Задача или багрепорт
+api,orchestrator,data,HTTP-запрос
+orchestrator,repo_adapter,commands,Запросить разрешённый контекст
+repo_adapter,repository,data,Запрос исходных файлов
+repository,repo_adapter,data,Исходный код и метаданные
+repo_adapter,orchestrator,data,Подготовленный контекст
+orchestrator,llm,data,Задача и контекст для генерации
+llm,orchestrator,data,Кандидат регрессионного теста
+orchestrator,validator,data,Тест и критерии проверки
+validator,orchestrator,data,Результат валидации
+orchestrator,runner,commands,Изолированный запуск теста
+repository,runner,data,Рабочая копия проекта
+runner,orchestrator,data,Результат выполнения теста
+orchestrator,git_host,commands,Создать ветку и PR
+git_host,reviewer,data,Diff и описание PR
+reviewer,git_host,commands,Решение или комментарии
+git_host,developer,data,Ссылка и статус PR
